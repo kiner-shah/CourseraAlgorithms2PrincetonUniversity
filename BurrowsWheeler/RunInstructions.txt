@@ -1,0 +1,7 @@
+To test BurrowsWheeler transformation step:
+java -cp C:\Users\user\Downloads\algs4.jar;. BurrowsWheeler - < abra.txt | java -cp C:\Users\user\Downloads\algs4.jar edu.princeton.cs.algs4.HexDump
+00 00 00 03 41 52 44 21 52 43 41 41 41 41 42 42
+128 bits
+
+To compare files:
+C:\Windows\System32\fc.exe abra.txt.bwt abra.bwt
