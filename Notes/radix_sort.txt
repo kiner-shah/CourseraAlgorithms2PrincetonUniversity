@@ -1,0 +1,77 @@
+// LSD radix sort - least significant digit first string sort
+// Consider characters from right to left. Stably sort using d th character as the key (using key-indexed counting)
+// Proposition: LSD sorts fixed-length strings in ascending order and is stable
+// Running time: 2 * W * N, extra space = N + R
+public class LSD {
+	// fixed-length W strings
+	public static void sort(String[] a, int W) {
+		int R = 256;
+		int N = a.length;
+		String[] aux = new String[N];
+		for (int d = W - 1; d >= 0; d--) {
+			int[] count = new int[R + 1];
+			for (int i = 0; i < N; i++)
+				count[a[i].charAt(d) + 1]++;
+			for (int r = 0; r < R; r++)
+				count[r + 1] += count[r];
+			for (int i = 0; i < N; i++)
+				aux[count[a[i].charAt(d)]++] = a[i];
+			for (int i = 0; i < N; i++)
+				a[i] = aux[i];
+		}
+	}
+}
+
+// MSD radix sort - most significant digit first string sort
+// Partition array into R pieces according to first character (use key-indexed counting)
+// Recursively sort all strings that start with each character (key-indexed counts delineate subarrays to sort)
+// Variable-length strings: treat strings as if they had extra char at end (smaller than any char)
+public static int charAt(String s, int d) {
+	if (d < s.length()) return s.charAt(d);
+	else return -1;
+}
+public static void sort(String[] a) {
+	aux = new String[a.length];
+	sort(a, aux, 0, a.length - 1, 0);
+}
+private static void sort(String[] a, String[] aux, int lo, int hi, int d) {
+	if (hi <= lo) return;
+	int[] count = new int[R + 2];
+	for (int i = lo; i <= hi; i++)
+		count[charAt(a[i], d) + 2]++;
+	for (int r = 0; r < R + 1; r++)
+		count[r + 1] += count[r];
+	for (int i = lo; i <= hi; i++)
+		aux[count[charAt(a[i], d) + 1]++] = a[i];
+	for (int i = lo; i <= hi; i++)
+		a[i] = aux[i - lo]
+	for (int r = 0; r < R; r++)
+		sort(a, aux, lo + count[r], lo + count[r + 1] - 1, d + 1);
+}
+// Observation 1: much too slow for small subarrays
+//	1. Each function call needs its own count[] array
+//	2. ASCII (256 counts): 100x slower than copy pass for N = 2
+//	3. Unicode (65536 counts): 32000x slower for N = 2
+// Observation 2: Huge number of small subarrays because of recursion
+// Cutoff to insertopm sort for small subarrays
+//	1. Insertion sort but start at d th character
+//	2. Implement less() so that it compares starting at d th character
+// Running time: 2 * N * W, extra space: N + D * R (D - function call stack depth i.e. length of longest prefix match)
+// Stable sort
+public statc void sort(String[] a, int lo, int hi, int d) {
+	for (int i = lo; i <= hi; i++)
+		for (int j = i; j > lo && less(a[j], a[j - 1], d); j--)
+			exch(a, j, j - 1);
+}
+// In Java, forming and comparing substrings is faster than directly comparing chars with charAt()
+private static boolean less(String v, String w, int d) {
+	return v.substring(d).compareTo(w.substring(d)) < 0;
+}
+// MSD string sort vs quicksort for strings
+// Disadvantages of MSD string sort:
+//	1. Accesses memory "randomly" (cache inefficient)
+//	2. Inner loop has a lot of instructions
+//	3. Extra space for count[] and aux[]
+// Disadvantage of quicksort:
+//	1. Linearithmic number of string compares (not linear)
+//	2. Has to rescan many characters in keys with long prefix matches

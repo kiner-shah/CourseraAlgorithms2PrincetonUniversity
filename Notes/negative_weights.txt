@@ -1,0 +1,32 @@
+// Dijsktra's algorithm doesn't work with negative weights
+// Negative cycle: a directed cycle whose sum of edge weights is negative
+// A SPT exists iff no negative cycles
+
+// Bellman-Ford:
+//	1. Initialize distTo[s] = 0 and distTo[v] = infinity for all other vertices
+//	2. Repeat V times: relax each edge
+// Computes SPT (in a weighted graph with no negative cycles) in time proportional to EV
+for (int i = 0; i < G.V(); i++) {
+	for (int v = 0; v < G.V(); v++) {
+		for (DirectedEdge e : G.adj(v))
+			relax(e)
+	}
+}
+
+// Observation: If distTo[v] does not change during pass i, no need to relax any edge pointing to v in pass i+1
+// FIFO implementation: maintain a queue of vertices whose distTo[] changed (be sure to keep at most one copy of each vertex on queue)
+
+// Finding a negative cycle
+// Observation: If there is a negative cycle, Bellman-Ford gets stuck in a loop, updating distTo[] and edgeTo[] entries of vertices in the cycle
+// Proposition: If any vertex is updated in phase V, there exists a negative cycle (and can trace back edgeTo[v] entries to find it)
+
+// Negative cycle application: arbitrage detection
+// Given table of exchange rates, is there an arbitrage opportunity?
+// Currency exchange graph:
+// Vertex = currency
+// Edge: transaction with weight equal to exchange rate
+// Find a directed cycle whose product of edge weights is > 1
+// Model as a negative cycle detection problem by taking logarithm
+//	1. Let weight of edge v->w be -ln(exchange rate from currency v to w)
+//	2. Multiplication turns to addition; > 1 turns to < 0
+//	3. Find a directed cycle whose sum of edge weights is < 0 (negative cycle)

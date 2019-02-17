@@ -1,0 +1,61 @@
+// path - sequence of vertices connected by edges
+// cycle - path whose first and last vertices are same
+// two vertices are connected if there is a path between them
+// Euler tour - a cycle which uses each edges exactly once
+// Hamilton tour - a cycle which uses each vertex exactly once
+// Biconnectivity - is there a vertex whose removal disconnects the graph?
+// Planarity - can you draw the graph in the plane with no crossing edges?
+// Graph isomorphism - do two adjacency lists represent the same graph?
+
+// Graph API
+public static int degree(Graph G, int v) {
+	int degree = 0;
+	for (int w : G.adj(v)) degree++;
+	return degree;
+}
+public static int maxDegree(Graph G) {
+	int max = 0;
+	for (int v = 0; i < G.V(); i++) {
+		if (degree(G, v) > max) {
+			max = degree(G, v);
+		}
+	}
+	return max;
+}
+public static double averageDegree(Graph G) {
+	return 2.0 * G.E() / G.V();
+}
+public static numberOfSelfLoops(Graph G) {
+	int count = 0;
+	for (int v = 0; i < G.V(); i++) {
+		for (int w : G.adj(v)) {
+			if (v == w) count++;
+		}
+	}
+	return count / 2;	// each edge is counted twice
+}
+
+// Representing graphs
+//	1. Adjacency matrix
+//	2. Adjacency list
+
+// Adjacency list representation
+public class Graph {
+	private final int V;
+	private Bag<Integer>[] adj;
+
+	public Graph(int V) {
+		this.V = V;
+		adj = (Bag<Integer>[]) new Bag[V];
+		for (int i = 0; i < V; i++) {
+			adj[i] = new Bag<Integer>();
+		}
+	}
+	public void addEdge() {
+		adj[v].add(w);
+		adj[w].add(v);
+	}
+	public Iterable<Integer> adj(int v) {
+		return adj[v];
+	}
+}

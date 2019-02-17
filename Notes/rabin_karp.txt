@@ -1,0 +1,70 @@
+// Fingerprint search
+// Basic idea = modular hashing
+//	1. Compute a hash of pattern characters 0 to M-1
+//	2. For each i, compute a hash of text characters i to M+i-1
+//	3. If pattern hash = text substring hash, check for a match
+
+// Modular hash function: using notation ti for txt.charAt(i), we wish to compute
+// xi = ti * R^(M-1) + ti+1 * R^(M-2) + ... + ti+M-1 * R^0 (mod Q)
+// Intuition: M-digit, base-R integer, modulo Q
+// Horner's method: linear time method to evaluate degree-M polynomial
+// Compute hash for M-digit key
+private long hash(String key, int M) {
+	long h = 0;
+	for (int j = 0; j < M; j++)
+		h = (R * h + key.charAt(j)) % Q;
+	return h;
+}
+// Challenge: how to efficiently compute xi+1 given that we know xi
+// Key property: can update hash function in constant time
+// xi+1 = (xi - ti * R^(M-1)) * R + ti+M
+
+public class RabinKarp {
+	private long patHash;	// pattern hash value
+	private int M;	// pattern length
+	private long Q;	// modulus
+	private int R;	// radix
+	private int RM;	// R^(M-1) % Q
+
+	public RabinKarp(String pat) {
+		M = pat.length();
+		R = 256;
+		Q = longRandomPrime();	// a large prime but avoid overflow
+
+		RM = 1;
+		for (int i = 1; i <= M - 1; i++)
+			RM = (R * RM) % Q;
+		patHash = hash(pat, M);
+	}
+	private long hash(String key, int M) { /* see above */ }
+	// Monte-Carlo version: return match if hash match
+	// Las Vegas version: check for substring match if hash match; continue search if false collision
+	public int search(String txt) {
+		int N = txt.length();
+		int txtHash = hash(txt, M);
+		if (patHash == txtHash) return 0;
+		for (int i = M; i < N; i++) {
+			txtHash = (txtHash + Q - RM * txt.charAt(i-M) % Q) % Q;
+			txtHash = (txtHash * R + txt.charAt(i)) % Q;
+			if (patHash == txtHash) return i - M + 1;
+		}
+		return N;
+	}
+}
+
+// Theory: If Q is a sufficiently large random prime (about M * N * N), then the probability of a false collision is about 1 / N
+// Practice: Choose Q to be a large prime (but not so large to cause overflow). Under reasonable assumptions, probabilty of a collision is about 1 / Q
+// Monte Carlo version:
+//	1. Always run in linear time
+//	2. Extemely likely to return correct answer (but not always!)
+// Las Vegas version:
+//	1. Always return correct answer
+//	2. Extemely likely to run in linear time (but worst case is MN)
+
+// Advantages:
+//	1. Extends to 2d patterns
+//	2. Extends to finding multiple patterns
+// Disadvantages:
+//	1. Arithmetic ops slower than char compares
+//	2. Las Vegas version requires backup
+//	3. Poor worst-case guarantee

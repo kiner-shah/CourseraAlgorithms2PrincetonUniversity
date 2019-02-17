@@ -1,0 +1,51 @@
+// Consider vertices in topological order
+// Relax all edges pointing from that vertex
+// Can work with negative edge weights
+// Computes SPT in time proportional to E + V
+
+public class AcyclicSP {
+	private DirectedEdge[] edgeTo;
+	private double[] distTo;
+
+	public AcyclicSP(EdgeWeightedDigraph G, int s) {
+		edgeTo = new DirectedEdge[G.V()];
+		distTo = new double[G.V()];
+
+		for (int v = 0; v < G.V(); v++) {
+			distTo[v] = Double.POSITIVE_INFINITY;
+		}
+		distTo[s] = 0.0;
+
+		Topological topological = new Topological(G);
+		for (int v : topological.order()) {
+			for (DirectedEdge e : G.adj(v))
+				relax(e);
+		}
+	}
+}
+
+// Content-aware resizing
+// To find vertical seam:
+// Grid DAG: vertex = pixel, edge = from pixel to 3 downward neighbors
+// Weight of pixel: energy function of 8 neighboring pixels
+// Seam: shortest path (sum of vertex weights) from top to bottom
+// To remove vertical seam: delete pixels on seam (one in each row)
+
+// Longest paths in edge-weighted DAGs
+// Formulate as a shortest path problem in edge-weighted DAGs
+//	1. Negate all weights
+//	2. Find shortest paths
+//	3. Negate weights in result
+// equivalent: reverse sense of equality in relax()
+
+// Application: parallel job scheduling
+// Given a set of jobs with durations and precedence constraints, schedule the jobs (by finding a start time for each) so as to achieve the minimum completion time, while respecting the constraints
+// Critical path method (CPM): create a edge-weighted DAG
+//	1. Source and sink vertices
+//	2. Two vertices (begin and end) for each job
+//	3. Three edges for each job:
+//		a. begin to end (weighted by duration)
+//		b. source to begin (0 weight)
+//		c. end to sink (0 weight)
+//	4. One edge for each precedence constraint (0 weight)
+// Use longest path from source to schedule each job

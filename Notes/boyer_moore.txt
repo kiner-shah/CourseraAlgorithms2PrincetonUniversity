@@ -1,0 +1,36 @@
+// Intution:
+//	1. Scan characters in pattern from right to left
+//	2. Can skip as many as M text chars when finding one not in the pattern
+
+// How much to skip?
+// Case 1: mismatch character not in pattern
+// Case 2a: mismatch character in pattern
+// Case 2b: mismatch character in pattern (but heuristic no help)
+// Precompute index of rightmost occurence of character c in pattern (-1 if character not in pattern)
+
+right = new int[R];
+for (int c = 0; c < R; c++)
+	right[c] = -1;
+for (int j = 0; j < M; j++)
+	right[pat.charAt(j)] = j;
+
+// Boyer-Moore implementation
+// Takes about ~N/M (sublinear) character compares to search for a pattern of length M in a text of length N
+// Worst case can be as bad as ~MN
+public int search(String txt) {
+	int N = txt.length();
+	int M = pat.length();
+	int skip;
+	for (int i = 0; i <= N-M; i += skip) {
+		skip = 0;
+		for (int j = M-1; j >= 0; j--) {
+			if (pat.charAt(j) != txt.charAt(i+j)) {
+				skip = Math.max(1, j - right[txt.charAt(i+j)]);
+				break;
+			}
+		}
+		if (skip == 0) return i;	// match
+	}
+	return N;
+}
+// Variant: can improve worst case to ~3N by adding a KMP-like rule to guard against repetitive patterns

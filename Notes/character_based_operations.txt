@@ -1,0 +1,70 @@
+// Prefix match: Keys with prefix "sh": "she", "shells", "shore"
+// Wildcard match: Keys that match ".he": "she" and "the"
+// Longest prefix: Key that is the longest prefix of "shellsort": "shells"
+
+// Ordered iteration:
+// Do inorder traversal of trie; add keys encountered to a queue
+// Maintain sequence of characters on path from root to node
+public Iterable<String> keys() {
+	Queue<String> queue = new Queue<String>();
+	collect(root, "", queue);
+	return queue;
+}
+private void collect(Node x, String prefix, Queue<String> q) {
+	if (x == null) return;
+	if (x.val != null) q.enqueue(prefix);
+	for (char c = 0; c < R; c++)
+		collect(x.next[c], prefix + c, q);
+}
+
+// Prefix matches: Find all keys in a symbol table starting with a given prefix
+// Example: Autocomplete in a cell phone, search bar, text editor, or shell
+// User types characters one at a time
+// System reports all matching strings
+public Iterable<String> keysWithPrefix(String prefix) {
+	Queue<String> queue = new Queue<String>();
+	Node x = get(root, prefix, 0);
+	collect(x, prefix, queue);
+	return queue;
+}
+
+// Longest prefix: find longest key in symbol table that is a prefix of query string
+// Example: to send packet toward destination IP address, router chooses IP address in routing table that is longest prefix match
+// Note: not the same as floor: floor("128.112.100.16") = "128.112.055.15"
+// Find longest key in symbol table that is a prefix of query string
+//	1. Search for query string
+//	2. Keep track of longest key encountered
+public String longestPrefixOf(String query) {
+	int length = search(root, query, 0, 0);
+	return query.substring(0, length);
+}
+private int search(Node x, String query, int d, int length) {
+	if (x == null) return length;
+	if (x.val != null) length = d;
+	if (d == query.length()) return length;
+	char c = query.charAt(d);
+	return search(x.next[c], query, d + 1, length);
+}
+
+// T9 texting: type text messages on a phone keypad
+// Multi-tap input: enter a letter by repeatedly pressing a key until the desired letter appears
+// T9 text input: Find all words that correspond to given sequence of numbers. Press 0 to see all completion options
+// Example: hello
+// Multi-tap: 4 4 3 3 5 5 5 5 5 5 6 6 6
+// T9: 4 3 5 5 6
+
+// Patricia trie: practical algorithm to retrieve information coded in alphanumeric
+//	1. Remove one-way branching
+//	2. Each node represents a sequence of characters
+//	3. Implementation: not covered in course
+// Applications:
+//	1. Database search
+//	2. P2P network search
+//	3. IP routing tables: find longest prefix match
+//	4. Compressed quad-tree for N-body simulation
+//	5. Efficiently storing and querying XML documents
+// Also known as crit-bit tree, radix tree
+
+// Suffix tree:
+//	1. Patricia trie of suffixes of a string
+//	2. Linear-time construction: not covered in course

@@ -1,0 +1,38 @@
+// Keyword-in-context search
+// Given a text of N characters, preprocess it to enable fast substring searcj (find all occurences of query string context)
+
+// Suffix sort
+//	1. Find all suffixes
+//	2. Sort the suffixes
+//	3. Use binary search to find all occurences of a keyword string
+
+// Longest repeated substring
+// Given a string of N characters, find the longest repeated substring
+// Solution: Perform suffix sort. This will bring all similar strings together. Then compute LCP between adjacent suffixes.
+public String lrs(String s) {
+	int N = s.length();
+	String[] suffixes = new String[N];
+	for (int i = 0; i < N; i++)
+		suffixes[i] = s.substring(i, N);
+	Arrays.sort(suffixes);
+	String lrs = "";
+	for (int i = 0; i < N - 1; i++) {
+		int len = lcp(suffixes[i], suffixes[i + 1]);
+		if (len > lrs.length())
+			lrs = suffixes[i].substring(0, len);
+	}
+	return lrs;
+}
+// Bad input: longest repeated substring very long
+// Example: same letter repeated N times
+// Example: two copies of the same Java codebase
+// Running time: quadratic (or worse) in D (D - length of longest match)
+
+
+// Suffix sorting in linearithmic time
+// Manber-Myers MSD algorithm overview:
+//	Phase 0: sort on first character using key-indexed counting sort
+//	Phase 1: given array of suffixes sorted on first 2^(i-1) characters, create array of suffixes sorted on first 2^i characters
+// worst-case running time: NlgN
+// Finishes after lgN phases
+// Can perform a phase in linear time

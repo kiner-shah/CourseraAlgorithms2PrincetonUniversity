@@ -1,0 +1,24 @@
+// Minimum spanning tree (MST)
+// Given: Undirected graph G with positive edge weights (connected)
+// Definition: A spanning tree of G is a subgraph T that is both a tree (connected and acyclic) and spanning (including all vertices)
+// Goal: Find min. weight spanning tree
+
+
+// Greedy algorithm
+// Simplifying assumptions:
+//	1. Edge weights are distinct
+//	2. Graph is connected
+// Consequence: MST exists and is unique
+
+// Cut: A cut in a graph is a partition of its vertices into two (non-empty) sets
+// Crossing edge: A crossing edge connects a vertex in one set with a vertex in the other
+// Cut property: Given any cut, the crossing edge of minimum weight is in the MST
+
+// Algorithm:
+//	1. Start with all edges colored gray
+//	2. Find cut with no black crossing edges; color its min-weight edge black
+//	3. Repeat until V - 1 edges are colored black
+
+// Even if the edge weights are not all distinct, the greedy MST algorithm is still correct.
+// If graph is not connected, then we will get a Minimum Spanning Forest (MST for each component)
+

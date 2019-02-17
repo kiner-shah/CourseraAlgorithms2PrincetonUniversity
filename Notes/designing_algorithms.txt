@@ -1,0 +1,66 @@
+Design algorithm: given algorithm for Y, can also solve X
+Mentality: Since I know how to solve Y, can I use that algorithm to solve X?
+
+Convex hull reduces to sorting - Graham scan algorithm
+Cost: NlogN + N
+
+Undirected shortest paths (with nonnegative weights) reduces to directed shortest path
+Replace each undirected edge by two directed edges
+Cost: ElogV + E
+
+Establishing lower bounds:
+Goal: Prove that a problem requires a certain number of steps
+Example: In decision tree model, any compare-based sorting algorithm requires NlogN compares in worst case
+Bad news: very difficult to establish lower bounds from scratch
+Good news: spread NlogN lower bound to Y by reducing sorting to Y (assuming cost of reduction is not too high)
+
+Linear-time reduction:
+Definition: problem X linear-time reduces to problem Y if X can be solved with:
+	1. Linear number of standard computational steps
+	2. Constant number of calls to Y
+Establish lower bound:
+	1. If X takes NlogN steps, then so does Y
+	2. If X takes N^2 steps, then so does Y
+Menatality:
+	1. If I could easily solve Y, then I could easily solve X
+	2. I can't easily solve X
+	3. Therefore, I can't easily solve Y
+
+Lower bound for convex hull:
+Proposition: In quadratic decision tree model (allows linear and quadratic tests), any algorithm for sorting N integers requires NlogN steps
+Proposition: sorting linear-time reduces to convex hull (lower bound mentality: if I can solve convex hull efficiently, I can sort efficiently)
+Implication: any ccw-based convex hull algorithm requires NlogN steps
+
+Proposition: sorting linear-time reduces to convex hull
+	1. Sorting instance: x1, x2, ..., xN
+	2. Convex hull instance: (x1, x1^2), (x2, x2^2), ...,(xN, xN^2)
+Proof:
+	1. Region [x : x^2 >= x] is convex => all points are on hull
+	2. Starting at point with most negative x, counterclockwise order of hull points yields integers in ascending order
+How to convince yourself that no linear-time convex hull algorithm exists?
+	1. Hard way: long futile search for a linear-time algorithm
+	2. Easy way: linear-time reduction from sorting
+
+Classifying problems:
+Desiderata': prove that two problems X and Y have the same complexity:
+	1. First, show that problem X linear-time reduces to Y
+	2. Second, show that Y linear-time reduces to X
+	3. Conclude that X and Y have the same complexity (even if we don't know what that is!)
+
+Remark: GNU Multiple Precision Library uses one of five different algorithms (for multiplication) depending on size of operands
+
+Good news: can put many problems into equivalence classes
+Complexity class: set of problems sharing some computational property
+Bad news: lots of complexity classes
+
+Summary:
+Reductions are important in theory to:
+	1. Design algorithms
+	2. Establish lower bounds
+	3. Classify problems according to their computaional requirements
+Reductions are important in practice to:
+	1. Design algorithms
+	2. Design reusable software modules
+	3. Determine difficulty of your problem and choose the right tool
+		- use exact algorithm for tractable problems
+		- use heuristics for intractable problems

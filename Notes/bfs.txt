@@ -1,0 +1,31 @@
+// Algorithm:
+//	1. Repeat until queue is empty
+//	2. Add to queue all unmarked vertices adjacent to v and mark them
+
+// Depth-first search: put unvisited vertices in stack
+// Breadth-first search: put unvisited vertices in queue
+// Shortest path: find path from s to t using fewest number of edges
+
+// Intution: BFS examines vertices in increasing distance from s
+// Computes shortest paths from s to all other vertices in a graph in time proportional to E + V
+public class BreadthFirstPaths {
+	private boolean[] marked;
+	private int[] edgeTo;
+	private void bfs(Graph G, int s) {
+		Queue<Integer> q = new Queue<Integer>();
+		q.enqueue(s);
+		marked[s] = true;
+		while (!q.isEmpty()) {
+			int v = q.dequeue();
+			for (int w : G.adj(v)) {
+				if (!marked[w]) {
+					q.enqueue(w);
+					marked[w] = true;
+					edgeTo[w] = v;
+				}
+			}
+		}
+	}
+}
+
+// Applications: routing, Kevin Bacon numbers (this was fun!)

@@ -1,0 +1,52 @@
+// DFA - deterministic finite state automaton
+// DFA is abstract string-searching machine
+// Finite number of states (including start and halt)
+// Exactly one transition for each char in alphabet
+// Accept if sequence of transitions leads to halt state
+
+// Q. What is interpretation of DFA state after reading in txt[i]?
+// A. State = number of characters in pattern that have been matched
+
+// Key differences from brute-force implementation
+// Need to precompute dfa[][] from pattern
+// Text pointer i never decrements
+// At most N character accesses
+public int search(String txt) {
+	int i, j, N = txt.length();
+	for (i = 0, j = 0; i < N && j < M; i++)
+		j = dfa[txt.charAt(i)][j];	// no backup
+	if (j == M) return i - M;
+	else return N;
+}
+// Could use input stream
+public int search(In in) {
+	int i, j;
+	for (i = 0, j = 0; !in.isEmpty() && j < M; i++)
+		j = dfa[in.readChar()][j];	// no backup
+	if (j == M) return i - M;
+	else return NOT_FOUND;
+}
+// KMP construction
+// Include one state for each character in pattern (plus accept state)
+// Match transition: if in state j (first j characters of pattern have already been matched) and next char c == pat.charAt(j) (next char matched), then go to j+1 (now first j+1 characters of pattern have been matched)
+// Mismatch transition: backup if c != pat.charAt(j)
+// If in state j and next char c != pat.charAt(j) then last j-1 characters of input are pat[1..j-1], followed by c
+// To compute dfa[c][j], simulate pat[1..j-1] on DFA and take transition c
+// Running time: seems to require j steps
+
+// Mismatch transition: for each state j and char c != pat.charAt(j), set dfa[c][j] = dfa[c][X], then update X = dfa[pat.charAt(j)][X]
+// M character accesses (but space / time proportional to RM)
+public KMP(String pat) {
+	this.pat = pat;
+	M = pat.length();
+	dfa = new int[R][M];
+	dfa[pat.charAt(0)][0] = 1;
+	for (int X = 0, j = 1; j < M; j++) {
+		for (int c = 0; c < R; c++)
+			dfa[c][j] = dfa[c][X];	// copy mismatch cases
+		dfa[pat.charAt(j)][j] = j + 1;	// set match case
+		X = dfa[pat.charAt(j)][X];	// update restart state
+	}
+}
+// KMP substring search accesses no more than N + M chars to search for a pattern of length M in a text of length N
+// Larger alphabets: improved version of KMP constructs nfa[] (Non-deterministic finite state automaton) in time and space proportional to M

@@ -1,0 +1,40 @@
+// Simple type of redundancy in a bitstream: long runs of repeated bits
+// How many bits to store counts? We'll use 8
+// What to do when run length exceeds max count? If longer than 255, intersperse runs of length 0
+// Applications: JPEG, ITU-T T4 Group 3 Fax, etc.
+public class RunLength {
+	private final static int R = 256; // max. run length count
+	private final static int lgR = 8;	// no. of bits per count
+	public static void compress() {
+		char run = 0;
+		boolean old = false;
+		while (!BinaryStdIn.isEmpty()) {
+			boolean b = BinaryStdIn.readBoolean();
+			if (b != old) {
+				BinaryStdOut.write(run, lgR);
+				run = 1;
+				old = !old;
+			}
+			else {
+				if (run == R - 1) {
+					BinaryStdOut.write(run, lgR);
+					run = 0;
+					BinaryStdOut.write(run, lgR);
+				}
+				run++;
+			}
+		}
+		BinaryStdOut.write(run, lgR);
+		BinaryStdOut.close();
+	}
+	public static void expand() {
+		boolean bit = false;
+		while (!BinaryStdIn.isEmpty()) {
+			int run = BinaryStdIn.readInt(lgR); // read 8 bits from stdin
+			for (int i = 0; i < run; i++)
+				BinaryStdOut.write(bit);	// write 1 bit to stdout
+			bit = !bit;
+		}
+		BinaryStdOut.close();	// pad 0s for byte alignment
+	}
+}

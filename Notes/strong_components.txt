@@ -1,0 +1,42 @@
+// Vertices v and w are strongly connected if there is a directed path from v to w and a directed path from w to v
+// Strong connectivity is an equivalence relation
+// Similar to connectivity in undirected graphs
+
+// Applications: food web graph, software module dependency graph
+
+// Kosaraju-Sharir algorithm: intution
+// Reverse graph: Strong components in G are same as in G(R) (reverse graph)
+// Kernel DAG: contract each strong component into a single vertex
+// Idea:
+//	1. Compute topological order (reverse postorder) in kernel DAG
+//	2. Run DFS, considering vertices in reverse topological order
+// Phases:
+//	1. Run DFS on G(R) to compute reverse postorder
+//	2. Run DFS on G, considering vertices in order given by first DFS
+// This algorithm computes strong components of graph in time proportional to E + V
+
+public class KosarajuSharirCC {
+	private boolean[] marked;
+	private int[] id;
+	private int count;
+
+	public KosarajuSharirCC(Graph G) {
+		marked = new boolean[G.V()];
+		id = new int[G.V()];
+		DepthFirstOrder dfs = new DepthFirstOrder(G.reverse());
+		for (int v : dfs.reversePost()) {
+			if (!marked[v]) {
+				dfs(G, v);
+				count++;
+			}
+		}
+	}
+	private void dfs(Graph G, int v) {
+		marked[v] = true;
+		id[v] = count;
+		for (int w : G.adj(v)) {
+			if (!marked[w]) dfs(G, w);
+		}
+	}
+	public boolean connected(int v, int w) { return id[v] == id[w]; }
+}

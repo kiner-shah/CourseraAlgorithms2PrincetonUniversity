@@ -1,0 +1,17 @@
+Desiderata: classify problems according to computational requirements
+Frustrating news: huge number of problems have defied classification
+
+Definition: problem X reduces to problem Y if you can use an algorithm that solves Y to help solve X
+
+Cost of solving X = total cost of solving Y (perhaps many calls to Y on problems of different sizes) + cost of reduction (preprocessing and postprocessing)
+
+Example 1: finding the median reduces to sorting
+To find the median of N terms:
+	1. Sort N items
+	2. Return item in the middle
+Cost: NlogN (cost of sorting) + 1 (cost of reduction)
+
+Example 2: element distinctness reduces to sorting
+	1. Sort N items
+	2. Check adjacent pairs for equality
+Cost: NlogN + N

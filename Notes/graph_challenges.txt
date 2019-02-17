@@ -1,0 +1,20 @@
+// Challenge 1: is a graph bipartite?
+// Divide the vertices into two subsets with the property that every edge connects a vertex in one subset to a vertex in another
+// Can do it using DFS
+
+// Challenge 2: find a cycle
+// Can do it using DFS
+
+// Challenge 3: Seven bridges of Konisberg (Euler tour)
+// Given a graph is there a (general) cycle that uses each edge exactly once. If yes, find it.
+// Answer: A connected graph is Eulerian iff all vertices have even degree
+
+// Challenge 4: Find a cycle that visits every vertex exactly once (Travelling Salesperson) (Hamiltonian cycle)
+// Intractable problem
+// classical NP-complete problem
+
+// Challenge 5: Are two graphs identical except for vertex names? (Graph isomorphism)
+// No one knows a good solution (a longstanding open problem)
+
+// Challenge 6: Lay out a graph in the plane without crossing edges
+// Can hire an expert to solve this: linear time DFS-based planarity algorithm discovered by Tarjan in 1970s (too complicated for most practitioners)

@@ -1,0 +1,25 @@
+// Grep: generalized regular expression print
+// Take a RE as a command-line argument and print the lines from standard input having some substring that is matches by the RE
+
+// Industrial strength grep implementation:
+//	1. Add wildcard
+//	2. Add multiway or
+//	3. Handle metacharacters
+//	4. Support character classes
+//	5. Add capturing capabilities
+//	6. Extend the closure operator
+//	7. Error checking and recovery
+//	8. Greedy vs reluctant matching
+
+// PERL: Practical Extraction and Report Language
+
+// Harvesting information: print all substrings of input that match a RE
+
+// Pattern matching with back-references is intractable
+
+// Summary:
+// Implement substring search via DFA simulation
+// Implement RE pattern matching via NFA simulation
+// RE is a compact description of a set of strings
+// NFA is an abstract machine equivalent in power to RE
+// DFAs and REs have limitations

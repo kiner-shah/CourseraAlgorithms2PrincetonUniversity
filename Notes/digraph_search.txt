@@ -1,0 +1,32 @@
+// DFS is a digraph algorithm
+public class DirectedDFS {
+	private boolean[] marked;
+	public DirectedDFS(Digraph G, int s) {
+		marked = new boolean[G.V()];
+		dfs(G, s);
+	}
+	private void dfs(Digraph G, int v) {
+		marked[v] = true;
+		for (int w : G.adj(v)) {
+			if (!marked[w]) dfs(G, w);
+		}
+	}
+	public boolean visited(int v) { return marked[v]; }
+}
+
+// Every program is a digraph (Wow! Never thought of it)
+// Applications: Dead-code elimination, infinite loop detection
+
+// Mark-sweep garbage collector
+// Every data structure is a digraph (vertex = object, edge = reference)
+// Roots: objects known to be directly accessible by program
+// Reachable objects: objects indirectly accessible by program (starting at root and following chain of pointers)
+// Mark and sweep algorithm (McCarthy, 1960):
+//	1. Mark: mark all reachable objects
+//	2. Sweep: if object is unmarked, it is garbage (so add to free list)
+
+
+// BFS is a digraph algorithm
+
+// Multiple-source shorted paths: given a digraph and set of source vertices, find shortest path from any vertex in the set to each other vertex
+// Implement by using BFS but initializing by enqueuing all source vertices

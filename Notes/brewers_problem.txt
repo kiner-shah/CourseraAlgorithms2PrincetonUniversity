@@ -1,0 +1,47 @@
+Linear programming: problem solving model for optimal allocation of scarce resources, among number of competing activitues that encompasses:
+	1. Shortest paths, maxflow, MST, matchinf, assginment, etc.
+	2. Ax = b, 2-person zero-sum games, etc.
+
+Maximize / Minimize an objective function
+
+Why significant?
+	1. Fast commercial solvers available
+	2. Widely applicable problem solving model (Delta claims that LP saves $100 million per year)
+	3. Key subroutine for integer programming solvers
+
+Brewer's problem:
+Small brewery produces ale and beer.
+Production limited by scarce resources: corn (480 lbs), hops (160 oz), barley malt (1190 lbs).
+Recipes for ale and beer require different proportions of resources.
+Ale: 5 pounds corn, 4 ounces hops, 35 pounds malt ($13 profit per barrel)
+Beer: 15 pounds corn, 4 ounces hops, 20 pounds malt ($23 profit per barrel)
+Brewer's problem: choose product mix to maximize profits
+
+Linear programming formulation of Brewer's problem:
+Let A be the number of barrels of ale
+Let B be the number of barrels of beer
+
+Maximize profits: 13A + 23B
+subject to constraints:
+5A + 15B <= 480		corn
+4A + 4B <= 160		hops
+35A + 20B <= 1190	malt
+A, B >= 0
+
+Inequalities define halfplanes, feasible region is a convex polygon.
+Optimal solution occurs at an extreme point
+
+Converting Brewer's problem to Standard form:
+Add variable Z and equation corresponding to objective function
+Add slack variable to convert each inequality to an equality
+Now a 6-dimensional problem
+
+Inequalities define halfspaces, feasible region is a convex polyhedron
+A set is convex if for any two points a and b in the set, so is (a + b) / 2
+An extreme point of a set is a point in the set that can't be written as (a + b) / 2, where a and b are two distinct points in the set
+Warning: don't always trust intution in higher dimensions
+
+Extreme points property: if there exists an optimal solution to P, then there exists one that is an extreme point
+- number of extreme points to consider is finite
+- but number of extreme points can be exponential
+Greedy property: extreme point optimal iff no better adjacent extreme point. Local optima are global optima (follows because objective function is linear and feasible region is convex).

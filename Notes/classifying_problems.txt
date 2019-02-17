@@ -1,0 +1,50 @@
+Which search problems are in P? No easy answers (we don't even know whether P = NP)
+
+Problem X poly-time reduces to problem Y if X can be solved with:
+- polynomial number of standard computational steps
+- polynomial number of calls to Y
+Consequence: If we can poly-time reduce SAT to problem Y, then we conclude that Y is (probably) intractable.
+
+An NP problem is NP-complete if all problems in NP poly-time reduce to it.
+
+Proposition (Cook 1971, Levin 1973): SAT is NP-complete (every NP problem is SAT problem in disguise)
+
+Extremely brief proof sketch:
+- convert a nondeterministic TM notation to SAT notation
+- if you can solve SAT, you can solve any problem in NP
+
+Corollary: Poly-time algorithm for SAT iff P = NP
+
+Implications of NP-completeness: SAT captures difficulty of whole class NP
+- Poly-time algorithm for SAT iff P = NP
+- No poly-time algorithm for some NP problem => none for SAT
+
+Exploting intractability:
+RSA cryptosystem:
+- To use: multiply 2 n-bit integers [poly-time]
+- To break: factor a 2 n-bit integer [unlikely poly-time]
+
+Relax one of the desired features to cope with intractability:
+- solve arbitray instances of the problem
+- solve the problem to optimality: develop a heuristic and hope it produces a good solution (no guarantees on quality of solution)
+- solve the problem in poly-time
+
+public class HamintonPath {
+	private boolean[] marked;	// vertices on current path
+	private int count = 0;	// number of Hamiltonian paths
+
+	public HamiltonPath(Graph G) {
+		marked = new boolean[G.V()];
+		for (int v = 0; v < G.V(); v++)
+			dfs(G, v, 1);
+	}
+	private void dfs(Graph G, int v, int depth) { // depth of recursion = length of current path
+		marked[v] = true;
+		if (depth == G.V()) count++;	// found one
+
+		for (int w : G.adj(v))
+			if (!marked[w]) dfs(G, w, depth + 1);	// backtrack if w is already part of path
+
+		marked[v] = false;	// clean up
+	}
+}

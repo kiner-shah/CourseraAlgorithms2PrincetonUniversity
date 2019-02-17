@@ -1,0 +1,51 @@
+// Substring search: find a single string in text
+// Pattern matching: find one of a specified set of strings in text
+// Regular expression: is a notation to specify a set of strings (possibly infinite)
+// Operations:
+//	1. Concatenation (precedence order = 3)
+//	2. Or (precedence order = 4)
+//	3. Closure (precedence order = 2)
+//	4. Parentheses (precedence order = 1)
+// Additional operations:
+//	1. Wildcard
+//	2. Character class
+//	3. At least 1
+//	4. Exactly k
+
+// RE: concise way to describe a set of strings
+// DFA: machine to recognize whether a given string is in a given set
+
+// Kleene's theorem:
+//	1. For any DFA, there exists a RE that describes the same set of strings
+//	2. For any RE, there exists a DFA that recognizes the same set of strings
+
+// Pattern matching implementation: basic plan (first attempt)
+// Overview is the same as for KMP: no backup in text input stream and linear-time guarantee
+// Underlying abstraction: DFA
+// Basic plan: apply Kleene's theorem
+//	1. Build DFA from RE
+//	2. Simulate DFA with text as input
+// Basic plan is infeasible since DFA may have exponential no. of states
+
+// Pattern matching implementation: basic plan (revised)
+// Overview is the same as for KMP: no backup in text input stream and quadratic-time guarantee (linear-time typical)
+// Underlying abstraction: NFA
+// Revised plan:
+//	1. Build NFA from RE
+//	2. Simulate NFA with text as input
+
+// Non-deterministic finite state automata
+// RE matching NFA:
+//	1. RE enclosed in parantheses
+//	2. One state per RE character (start = 0, accept = M)
+//	3. epsilon-transition - change state but don't scan text
+//	4. normal-transition - change state and scan to next text char
+//	5. Accept if any sequence of transitions (after scanning all text characters) ends in accept state
+
+// Nondeterminism:
+//	1. One view: machine can guess the proper sequence of state transitions
+//	2. Another view: sequence is a proof that the machine accepts the text
+
+// How to determine whether a string is matched by an automaton?
+//	DFA: deterministic: easy because exactly one applicable transitions
+//	NFA: nondeterministic: can be several applicable transitions; need to select the right one

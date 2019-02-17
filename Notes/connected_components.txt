@@ -1,0 +1,38 @@
+// Vertices v and w are connected if there is a path between them
+// Goal: preprocess graph to answer queries of the form: is v connected to w, in constant time
+// The relation "is connected to" is an equivalence relation
+//	1. Reflexive: v is connected to v
+//	2. Symmetric: if v is connected to w, then w is connected to v
+//	3. Transitive: if v is connected to w and w is connected to x, then v is connected to x
+
+// A connected component is a maximal set of connected vertices
+
+// Algorithm:
+//	1. Initialize all vertices v as unmarked
+//	2. For each unmarked vertex v, run DFS to identify all vertices discovered as part of the same component
+
+public class CC {
+	private boolean[] marked;
+	private int[] id;
+	private int count;
+
+	public CC(Graph G) {
+		marked = new boolean[G.V()];
+		id = new int[G.V()];
+		for (int v = 0; v < G.V(); v++) {
+			if (!marked[v]) {
+				dfs(G, v);
+				count++;
+			}
+		}
+	}
+	public int count() { return count; }
+	public int id(int v) { return id[v]; }
+	private void dfs(Graph G, int v) {
+		marked[v] = true;
+		id[v] = count;
+		for (int w : G.adj(w)) {
+			if (!marked[w]) dfs(G, w);
+		}
+	}
+}

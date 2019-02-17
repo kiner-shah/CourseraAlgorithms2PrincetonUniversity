@@ -1,0 +1,15 @@
+Four fundamental problems:
+LSOLVE: given a system of linear equations, find a solution
+LP: given a system of linear inequalities, find a solution
+ILP: given a system of linear inequalities, find a 0-1 solution
+SAT: given a system of boolean equations, find a binary solution
+
+Which of these problems have poly-time algorithms?
+LSOLVE: Yes, Gaussian elimination solves N by N system in N^3 time
+LP: Yes. Ellipsoid algorithm is poly-time (but was open problem for decades)
+ILP, SAT: No poly-time algorithm known or believed to exist (but we still don't know for sure)
+
+Search problem: given an instance I of a problem, find a solution S or report doesn't exists
+Requirement: must be able to efficiently check that S is a solution.
+
+FACTOR: given a n-bit integer, find a nontrivial factor

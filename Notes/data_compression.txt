@@ -1,0 +1,38 @@
+// Compression reduces the size of a file
+//	1. To save space when storing it
+//	2. To save time when transmitting it
+//	3. Most files have lots of redundancy
+
+Moore's law: no. of transistors on a chip doubles every 18-24 months
+Parkinson's law: data expands to fill space available
+
+// Generic file compression
+//	Files: GZIP, BZIP, 7z
+//	Archivers: PKZIP
+//	File systems: NTFS, HFS+, ZFS
+//	Images: GIF, JPEG
+//	Sound: MP3
+//	Video: MPEG, DivX, HDTV
+//	Communication: ITU-T T4 Group 3 fax, V.42bis modem, Skype
+//	Databases: Google, Facebook, etc.
+
+// Lossless compression and expansion
+//	Message: binary data B we want to compress
+//	Compress: Generates a "compressed" representation C(B)
+//	Expand: Reconstructs original bitstrem B
+// Compression ratio: Bits in C(B) / Bits in B
+
+// Data compression has been omnipresent since antiquity
+//	1. Number systems
+//	2. Natural languages
+//	3. Mathematical equation
+// Has played a central role in communications technology
+//	1. Grade 2 Braille
+//	2. Morse code
+//	4. Telephone system
+// And is part of modern life
+//	1. MP3
+//	2. MPEG
+
+// US Patent 5,533,051 on "Methods for Data Compression", which is capable of compression all files?
+// Proposition: No algorithm can compress every bitstring

@@ -1,0 +1,19 @@
+// Digraph: set of vertices connected pairwise by directed edges
+// In-degree: no. of incoming edges in a vertex
+// Out-degree: no. of outgoing edges in a vertex
+// Topological sort: Can you draw a digraph so that all edges point upwards
+// Strong connectivity: is there a directed path between all pairs of vertices?
+// Transitive closure: for which vertices v and w is there a path from v to w?
+
+public class Digraph {
+	private final int V;
+	private final Bag<Integer>[] adj;
+	public Digraph(int V) {
+		this.V = V;
+		adj = (Bag<Integer>[]) new Bag[V];
+		for (int v = 0; v < V; v++)
+			adj[v] = new Bag<Integer>();
+	}
+	public void addEdge(int v, int w) { adj[v].add(w); }
+	public Iterable<Integer> adj(int v) { return adj[v]; }
+}

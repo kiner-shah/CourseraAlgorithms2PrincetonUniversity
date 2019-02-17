@@ -1,0 +1,36 @@
+// Consider edges in ascending order of weight
+// Add next edge to tree T unless doing so would create a cycle
+
+// Challenge: would adding edge v-w to tree T create a cycle? If not, add it.
+// Efficient solution: Use union-find data structure.
+//	1. Maintain a set for each connected component in T.
+//	2. If v and w are in same set, then adding v-w would create a cycle.
+//	3. To add v-w in T, merge sets containing v and w.
+
+// Computes MST in time proportional to ElogE
+// build pq - 1 times with cost E
+// delete min - E times with cost logE
+// union - V times with cost log* V (amortized bound using weighted quick union with path compression)
+// connected - E times with cost log* V (amortized bound using weighted quick union with path compression)
+public class KruskalMST {
+	private Queue<Edge> mst = new Queue<Edge>();
+
+	public KruskalMST(EdgeWeightedGraph G) {
+		MinPQ<Edge> pq = new MinPQ<Edge>();
+		for (Edge e : G.edges()) {
+			pq.insert(e);
+		}
+
+		UF uf = new UF(G.V());
+		while (!q.isEmpty() && mst.size() < G.V() - 1) {
+			Edge e = pq.delMin();
+			int v = e.either(), w = e.other(v);
+			if (!uf.connected(v, w)) {
+				uf.union(v, w);
+				mst.enqueue(e);
+			}
+		}
+	}
+
+	public Iterable<Edge> edges() { return mst; }
+}

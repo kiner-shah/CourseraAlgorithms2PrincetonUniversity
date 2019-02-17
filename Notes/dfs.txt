@@ -1,0 +1,45 @@
+// Tremaux maze exploration
+// Algorithm:
+//	1. Unroll the maze behind you
+//	2. Mark each visited intersection and each visited passage
+//	3. Retrace steps when no visited options
+
+// Design patter for graph processing
+//	1. Create Graph object
+//	2. Pass the Graph to graph processing routine
+//	3. Query the graph processing routine for information
+
+// DFS
+// Marks all vertices connected to s in time proportional to sum of their degrees
+// After DFS, can find vertices connected to s in constant time and can find a path to s (if one exists) in time propotional to its length
+public class DepthFirstPaths {
+	private boolean[] marked;
+	private int[] edgeTo;
+	private int s;
+
+	public DepthFirstPaths(Graph G, int s) {
+		// initialize data structures
+		// ...
+		dfs(G, s);
+	}
+	private void dfs(Graph G, int v) {
+		marked[v] = true;
+		for (int w : G.adj(v)) {
+			if (!marked[w]) {
+				dfs(G, w);
+				edgeTo[w] = v;
+			}
+		}
+	}
+	public boolean hasPathTo(v) {
+		return marked[v];
+	}
+	public Iterable<Integer> pathTo(int v) {
+		if (!hasPathTo(v)) return null;
+		Stack<Integer> path = new Stack<Integer>();
+		for (int x = v; x != s; x = edgeTo[x])
+			path.push(x);
+		path.push(s);
+		return path;
+	}
+}

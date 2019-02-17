@@ -1,0 +1,10 @@
+// Euclidean MST: Given N points in the plane, find MST connecting them, where distances between point pairs are their Euclidean distances
+// Brute force: Computes ~N^2 / 2 distances and run Prim's algorithm
+// Ingenuity: Exploit geometry and do it in ~cNlogN (Delaunay triangulation)
+
+// k-clustering: divide a set of objects classify into k coherent groups
+// Distance function: numeric value specifying "closeness" of two objects
+// Goal: divide into clusters so that objects in different clusters are far apart
+
+// single link: distance between two clusters equals the distance between two closest objects (one in each cluster)
+// single link clustering: Given an integer k, find a k-clustering that maximizes the distance between two closest clusters

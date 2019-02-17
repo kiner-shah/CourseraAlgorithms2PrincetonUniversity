@@ -1,0 +1,158 @@
+// Algorithm: Start with 0 flow. While there exists an augmenting path
+//	1. find an augmenting path
+//	2. compute bottleneck capacity
+//	3. increase flow on that path by bottleneck capacity
+
+// Relationships between flows and cuts
+// A net flow across a cut (A, B) is the sum of the flows on its edges from A to B minus the sum of the flows on its edges from B to A
+// Flow-value lemma: let f be any flow and let (A, B) be any cut. Then, the net flow across (A, B) equals the value of f
+// Weak duality: let f be any flow and let (A, B) be any cut. Then, the value of the flow <= the capacity of the cut
+
+// Augmenting path theorem: a flow f is a maxflow iff no augmenting paths
+// Maxflow-mincut theorem: value of the maxflow = capacity of mincut
+// Proof: the following three conditions are equivalent for any flow f:
+//	1. There exists a cut whose capacity equals the value of the flow f
+//	2. f is a maxflow
+//	3. There is no augmenting path w.r.t. f
+
+// [1 => 2] (one implies two)
+//	a. Suppose that (A, B) is a cut with capacity equal to the value of f
+//	b. Then, the value of any flow f' <= capacity of (A, B) (weak duality) = value of f (by assumption)
+//	c. Thus, f is a maxflow
+
+// [2 => 3] (two implies three): we prove contrapositive [~3 => ~2]
+//	a. Suppose that there is an augmenting path w.r.t. f
+//	b. Can improve flow f by sending flow along this path
+//	c. Thus, f is not a maxflow
+
+// [3 => 1] (three implies one)
+//	a. Let (A, B) be a cut where A is the set of vertices connected to s by an undirected path with no full forward or empty backward edges
+//	b. By definition, s is in A: since no augmenting path, t is in B
+//	c. Capacity of cut = net flow across cut (forward edges full; backward edges empty)
+//	                   = value of flow f (flow-value lemma)
+
+// To compute mincut (A, B) from maxflow f:
+//	1. By augmenting path theorem, no augmenting paths w.r.t. f
+//	2. Compute A = set of vertices connected to s by an undirected path with no full forward or empty backward edges
+
+// Questions:
+//	1. How to compute a mincut? Easy
+//	2. How to find an augmenting path? BFS works well
+//	3. If FF terminates, does it always compute a maxflow? Yes
+//	4. Does FF always terminates? If so, after how many augmentations? For question 1, yes, provided edge capacities are integers (or augmenting paths are chosen carefully). For question 2, requires clever analysis.
+
+
+// Important special case: Edge capacities are integers between 1 and U
+// Invariant: the flow is integer-valued throughout Ford-Fulkerson
+// Proposition: no. of augmentations <= value of maxflow
+// Integrality theorem: there exists an integer-valued maxflow
+
+// Base news: even when edge capacities are integers, number of augmenting paths could be equal to the value of maxflow
+// Good news: this case is easilya avoided (us shortest path / fattest path)
+
+// Flow edge data type: associate flow fe and capacity ce with edge e = v->w
+// Flow network data type: need to process edge e = v->w in either direction: include e in both v and w's adjacency lists
+// Residual capacity:
+//	1. Forward edge: residual capacity = ce - fe
+//	2. Backward edge: residual capacity = fe
+// Augment flow:
+//	1. Forward edge: add value
+//	2. Backward edge: subtract value
+// Residual network: a useful view of a flow network. Two edges per node: one is forward edge and other is backward edge, both with weights equal to their respective residual capacities
+// Augmenting path in original network is equivalent to directed path in residual network
+
+public class FlowEdge {
+	private final int v, w;	// from and to
+	private final double capacity;	// capacity
+	private double flow;	// flow
+
+	public FlowEdge(int v, int w, double capacity) {
+		this.v = v;
+		this.w = w;
+		this.capacity = capacity;
+	}
+	public int from() { return v; }
+	public int to() { return w; }
+	public double capacity() { return capacity; }
+	public double flow() { return flow; }
+	public int other(int vertex) {
+		if (vertex == v) return v;
+		else if (vertex == w) return v;
+		else throw new RuntimeException("Illegal endpoint");
+	}
+	public double residualCapacityTo(int vertex) {
+		if (vertex == v) return flow;
+		else if (vertex == w) return capacity - flow;
+		else throw new IllegalArgumentException();
+	}
+	public void addResidualFlowTo(int vertex, double delta) {
+		if (vertex == v) flow -= delta;
+		else if (vertex == w) flow += delta;
+		else throw new IllegalArgumentException();
+	}
+}
+
+public class FlowNetwork {
+	private final int V;
+	private Bag<FlowEdge>[] adj;
+
+	public FlowNetwork(int V) {
+		this.V = V;
+		adj = (Bag<FlowEdge>[]) new Bag[V];
+		for (int v = 0; v < V; v++)
+			adj[v] = new Bag<FlowEdge>();
+	}
+	public void addEdge(FlowEdge e) {
+		int v = e.from();
+		int w = e.to();
+		adj[v].add(e);
+		adj[w].add(e);
+	}
+	public Iterable<FlowEdge> adj(int v) { return adj[v]; }
+}
+
+public class FordFulkerson {
+	private boolean[] marked;	// true if s->v path in residual network
+	private FlowEdge[] edgeTo;	// last edge on s->v path
+	private double value;	// value of flow
+
+	public FordFulkerson(FlowNetwork G, int s, int t) {
+		value = 0.0;
+		while (hasAugmentingPathTo(G, s, t)) {
+			double bottle = Double.POSITIVE_INFINITY;
+			// compute bottleneck capacity
+			for (int v = t; v != s; v = edgeTo[v].other(v))
+				bottle = Math.min(bottle, edgeTo[v].residualCapacityTo(v));
+			// augment flow
+			for (int v = t; v != s; v = edgeTo[v].other(v))
+				edgeTo[v].addResidualFlowTo(v, bottle);
+
+			value += bottle;
+		}
+	}
+	private boolean hasAugmentingPathTo(FlowNetwork G, int s, int t) {
+		edgeTo = new FlowEdge[G.V()];
+		marked = new boolean[G.V()];
+
+		Queue<Integer> q = new Queue<Integer>();
+		q.enqueue(s);
+		marked[s] = true;
+
+		while (!q.isEmpty()) {
+			int v = q.dequeue();
+			for (FlowEdge e : G.adj(v)) {
+				int w = e.other(v);
+				if (e.residualCapacityTo(w) > 0.0 && !marked[w]) {
+					marked[w] = true;
+					edgeTo[w] = e;
+					q.enqueue(w);
+				}
+			}
+		}
+		return marked[t];
+	}
+	public double value() { return value; }
+	public boolean inCut(int v)	{// is v reachable from s in residual network?
+		return marked[v];
+	}
+}

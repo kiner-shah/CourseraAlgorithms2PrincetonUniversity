@@ -1,0 +1,8 @@
+NP is the class of all search problems (classic definition limits NP to yes-no problems).
+P is the class of search problems solvable in poly-time (classic definition limits P to yes-no problems).
+
+Nondeterministic machine can guess the desired solution.
+NP: search problems solvable in poly-time on a nondeterministic Turing machine
+
+Extended Church-Turing thesis:
+P = search problems solvable in poly-time in the natural world

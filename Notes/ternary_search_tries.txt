@@ -1,0 +1,67 @@
+// Ternary search tries:
+//	1. Store characters and values in nodes (not keys)
+//	2. Each node has 3 children: smaller (left), equal (middle), larger (right)
+
+// Search in a TST: follow links corresponding to each charcter in the key
+//	1. If less, take left link; if greater, take right link
+//	2. If equal, take the middle link and move to the next key character
+// Search hit: Node where search ends has a non-null value
+// Search miss: Reach a null link or node where search ends has null value
+
+public class TST<Value> {
+	private Node root;
+	private class Node {
+		private Value val;
+		private char c;
+		private Node left, mid, right;
+	}
+	public void put(String key, Value val) {
+		root = put(root, key, val, 0);
+	}
+	private Node put(Node x, String key, Value val, int d) {
+		char c = key.charAt(d);
+		if (x == null) { x = new Node(); x.c = c; }
+		if (c < x.c) x.left = put(x.left, key, val, d);
+		else if (c > x.c) x.right = put(x.right, key, val, d);
+		else if (d < key.length() - 1) x.mid = put(x.mid, key, val, d + 1);
+		else x.val = val;
+		return x;
+	}
+	public boolean contains(String key) {
+		return get(key) != null;
+	}
+	public Value get(String key) {
+		Node x = get(root, key, 0);
+		if (x == null) return null;
+		return x.val;
+	}
+	private Node get(Node x, String key, int d) {
+		if (x == null) return null;
+		char c = key.charAt(d);
+		if (c < x.c) return get(x.left, key, d);
+		else if (c > x.c) return get(x.right, key, d);
+		else if (d < key.length() - 1) return get(x.mid, key, d + 1);
+		else return x;
+	}
+}
+// Remark: can build balanced TSTs via rotations to achieve L + lgN worst-case guarantees
+
+// TST with R^2 branching at root
+// Hybrid of R-way trie and TST
+//	1. Do R^2-way branching at rot
+//	2. Each of R^2 root nodes points to a TST
+
+// TST vs Hashing
+// Hashing:
+//	1. Need to examine entire key
+//	2. Search hits and misses cost about the same
+//	3. Performance relies on hash function
+//	4. Does not support ordered symbol table operations
+// TST:
+//	1. Works only for strings (or digital keys)
+//	2. Only examines just enough key characters
+//	3. Search miss may involve only a few characters
+//	4. Supports ordered symbol table operations (plus others)
+
+// TSTs are faster than hashing (especially for search misses)
+// More flexible than red-black BSTs

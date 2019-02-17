@@ -1,0 +1,79 @@
+// Shortest paths: given an edge weighted digraph, find the shortest path from s to t
+
+// Variants:
+//	1. Source-sink: from one vertex to another
+//	2. Single source: from one vertex to every other
+//	3. All points: between all pairs of vertices
+//	4. Non-negative weights
+//	5. Arbitrary weights
+//	6. Euclidean weights
+//	7. No directed cycles
+//	8. No negative cycles
+
+public class DirectedEdge {
+	private final int v, w;
+	private final double weight;
+
+	public DirectedEdge(int v, int w, double weight) {
+		this.v = v;
+		this.w = w;
+		this.weight = weight;
+	}
+	public int from() { return v; }
+	public int to() { return w; }
+	public int weight() { return weight; }
+}
+
+public class EdgeWeightedDigraph {
+	private final int V;
+	private final Bag<DirectedEdge>[] adj;
+
+	public EdgeWeightedDigraph(int V) {
+		this.V = V;
+		adj = (Bag<DirectedEdge>[]) new Bag[V];
+		for (int v = 0; v < V; v++) {
+			adj[v] = new Bag<DirectedEdge>();
+		}
+	}
+	public void addEdge(DirectedEdge e) {
+		int v = e.from();
+		adj[v].add(e);
+	}
+	public Iterable<DirectedEdge> adj(int v) { return adj[v]; }
+}
+
+// Observation: A shortest-paths tree (SPT) solution exists
+// Consequence: Can represent SPT with two vertex-indexed arrays:
+//	1. distTo[v]: length of shortest path from s to v
+//	2. edgeTo[v]: last edge on the shortest path from s to v
+public double distTo(int v) { return distTo[v]; }
+public Iterable<DirectedEdge> pathTo(int v) {
+	Stack<DirectedEdge> path = new Stack<DirectedEdge>();
+	for (DirectedEdge e = edgeTo[v]; e != null; e = edgeTo[e.from()]) {
+		path.push(e);
+	}
+	return path
+}
+
+// Edge relaxation: relax edge e = v->w
+//	1. distTo[v]: length of shortest known path from s to v
+//	2. distTo[w]: length of shortest known path from s to w
+//	3. edgeTo[w]: last edge on shortest known path from s to w
+// If e = v->w gives shorter path to w through v, update both distTo[w] and edgeTo[w]
+public void relax(DirectedEdge e) {
+	int v = e.from(), w = e.to();
+	if (distTo[w] > distTo[v] + e.weight()) {
+		distTo[w] = distTo[v] + e.weight();
+		edgeTo[w] = e;
+	}
+}
+
+// Shortest path optimality conditions:
+// Let G be a edge-weighted digraph. Then distTo[] are the shortest path distances from s iff:
+//	1. distTo[s] = 0
+//	2. For each vertex v, distTo[v] is the length of some path from s to v
+//	3. For each edge e = v->w, distTo[w] <= distTo[v] + e.weight()
+
+// Generic shortest-paths algorithm
+// Initialize distTo[s] = 0 and distTo[v] = infinity for all other vertices
+// Repeat until optimality conditions are satisfied: relax any edge

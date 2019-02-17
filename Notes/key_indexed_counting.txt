@@ -1,0 +1,27 @@
+// Assumption: keys are integers between 0 and R - 1
+// Implication: can use key as an array index
+// Applications:
+//	1. Sort string by first letter
+//	2. Sort class roster by section
+//	3. Sort phone numbers by area code
+//	4. Subroutine in a sorting algorithm
+
+// Sort an array a[] of N integers between 0 and R - 1
+//	1. Count frequencies of each letter using ket as index
+//	2. Compute frequency cumulates which specify destinations
+//	3. Access cumulates using key as index to move items
+//	4. Copy back into original array
+// Proposition:
+//	1. uses ~11N + 4R array accesses to sort items whose keys are integers between 0 and R - 1
+//	2. uses extra space proportional to N + R
+//	3. stable sort
+int N = a.length;
+int[] count = new int[R + 1];
+for (int i = 0; i < N; i++)
+	count[a[i] + 1]++;
+for (int r = 0; r < R; r++)
+	count[r + 1] += count[r];
+for (int i = 0; i < N; i++)
+	aux[count[a[i]]++] = a[i];
+for (int i = 0; i < N; i++)
+	a[i] = aux[i];

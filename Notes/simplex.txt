@@ -1,0 +1,127 @@
+George Dantzig, 1947
+
+Developed shortly after WWII in response to logistical problems including Berlin airlift
+Ranked as one of top 10 scientific algorithms of 20th century
+
+Generic algorithm:
+	1. Start at some extreme point
+	2. Pivot from one extreme point to an adjacent one (never decreasing objective function)
+	3. Repear until optimal
+
+How to implement? Linear algebra
+
+A basis is a subset of m of the n variables
+Basic feasible solutions (BFS)
+	1. Set n - m nonbasic variables to 0, solve for remaining m variables
+	2. Solve m equations in m unknowns
+	3. If unique and feasible => BFS
+	4. BFS <=> extreme point
+
+Initial basic feasible solution
+	1. Start with slack variables as the basis (one basic variable per row).
+	2. Set non-basic variables A and B to 0.
+	3. 3 equations in 3 unknowns yields slack variables values (no algebra needed)
+
+Choosing pivot: any variable with positive coefficient in objective function, but row with min. ratio
+
+Stop pivoting when no objective function coefficient is positive.
+
+Implementations:
+Encode standard form LP in a single Java 2D array
+   -----------
+m | A | I | b |
+1 | c | 0 | 0 |
+   ------------
+   n    m   1
+
+public class Simplex {
+	private double[][] a;	// simplex tableau
+	private int m, n;	// M constraints, N variables
+
+	public Simplex(double[][] A, double[] b, double[] c) {
+		m = b.length;
+		n = c.length;
+		a = new double[m + 1][m + n + 1];
+
+		for (int i = 0; i < m; i++)		// Put A[][] into tableau
+			for (int j = 0; j < n; j++)
+				a[i][j] = A[i][j];
+
+		for (int j = n; j < m + n; j++) a[j - n][j] = 1.0;	// Put I[][] into tableau
+		for (int j = 0; j < n; j++) a[m][j] = c[j];	// put c[] into tableau
+		for (int i = 0; i < m; i++) a[i][m + n] = b[i];	// put b[] into tableau
+	}
+}
+
+Finding first column q using Bland's rule: index of first column whose objective function is positive.
+
+private int bland() {
+	for (int q = 0; q < m + n; q++)
+		if (a[M][q] > 0) return q;	// entering column q has positive objective function coefficient
+	return -1;	// optimal
+}
+
+Find leaving row p using min-ratio rule.
+(Bland's rule: if a tie, choose first such row)
+
+private int minRatioRule(int q) {
+	int p = -1;		// leaving row
+	for (int i = 0; i < m; i++) {
+		if (a[i][q] <= 0) continue;	// consider only positive values
+		else if (p == -1) p = i;
+		else if (a[i][m + n] / a[i][q] < a[p][m + n] / a[p][q])
+			p = i;	// row p has min ratio so far
+	}
+	return p;
+}
+
+
+Pivot on element on row p and column q
+
+public void pivot(int p, int q) {
+	for (int i = 0; i <= m; i++)
+		for (int j = 0; j <= m + n; j++)
+			if (i != p && j != q)
+				a[i][j] -= a[p][j] * a[i][q] / a[p][q]; // scale all entries but row p and column q
+	for (int i = 0; i <= m; i++)
+		if (i != p) a[i][q] = 0.0;	// zero out column q
+
+	for (int j = 0; j <= m + n; j++)
+		if (j != q) a[p][j] /= a[p][q];	// scale row p
+
+	a[p][q] = 1.0;
+}
+
+Execute the simplex algorithm
+
+public void solve() {
+	while (true) {
+		int q = bland();	// entering column q (optimal if -1)
+		if (q == -1) break;
+		int p = minRatioRule(q);	// leaving row p (unbounded if -1)
+		if (p == -1)	...
+
+		pivot(p, q);
+	}
+}
+
+Remarkable property: In typical practical applications, simplex algorithm terminates after at most 2(m + n) pivots
+
+Pivoting rules: Carefully balance the cost of finding an entering variable with the number of pivots needed
+	- No pivot rule is known that is guaranteed to be polynomial.
+	- Most pivot rules are known to be exponential (or worse) in worst-case.
+
+Degeneracy: new basis, same extreme point ("stalling" is common in practice)
+Cycling: get stuck by cycling through different bases that all correspond to same extreme point
+	- doesn't occur in the wild
+	- bland's rule guarantees finite # of pivots (choose lowest valid index for entering and leaving columns)
+
+To improve bare-bones implementation:
+	- avoid stalling: requires artful engineering
+	- maintain sparsity: requires fancy data structures
+	- numerical stability: requires advanced math
+	- detect infeasibility: run phase 1 simplex algorithm
+	- detect unboundedness: no leaving row
+Best practice: don't implement yourself
+Industrial-strength solvers: routinely solve LPs with millions of variables
+Modelling languages: simplify task of modelling problem as LP

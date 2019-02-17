@@ -1,0 +1,63 @@
+// Start with vertex 0 and greedily grow tree T
+// Add to T the min weight edge with exactly one endpoint in T
+// Repeat until V - 1 edges
+
+// Prim's algorithm lazy implementation: Maintain a PQ of edges with (at least) one endpoint in T
+//	1. Key = edge, priority = weight of edge
+//	2. Delete-min to determine next edge e = v-w to add to T
+//	3. Disregard if both endpoints v and w are in T
+//	4. Otherwise, let w be the vertex not in T:
+//		a. add to PQ any edge incident to w (assuming other endpoint not in T)
+//		b. add w to T
+
+// Computes MST in time proportional to ElogE and extra space proportional to E (in worst case)
+// delete min - E times with cost logE
+// insert - E times with cost logE
+class LazyPrimMST {
+	private boolean[] marked;
+	private Queue<Edge> mst;
+	private MinPQ<Edge> pq;
+
+	publiv LazyPrimMST(WeightedGraph G) {
+		pq = new MinPQ<Edge>();
+		mst = new Queue<Edge>();
+		marked = new boolean[G.V()];
+		visit(G, 0);
+
+		while (!pq.isEmpty()) {
+			Edge e = pq.delMin();
+			int v = e.either(), w = e.other(v);
+			if (marked[v] && marked[w]) continue;
+			mst.enqueue(e);
+			if (!marked[v]) visit(G, v);
+			if (!marked[w]) visit(G, w);
+		}
+	}
+	private void visit(WeightedGraph G, int v) {
+		marked[v] = true;
+		for (Edge e : G.adj(v)) {
+			if (!marked[e.other(v)])
+				pq.insert(e);
+		}
+	}
+	public Iterable<Edge> mst() { return mst; }
+}
+
+// Prim's algorithm eager implementation: Maintain a PQ of vertices connected by an edge to T where priority of vertex v = weight of shortest edge connecting v to T:
+//	1. Delete min vertex v and add its associated edge e = v-w to T
+//	2. Update PQ by considering all edges e = v-x incident to v
+//		a. ignore if x is already on T
+//		b. add x to PQ if not already on it
+//		c. decrease priority of x if v-x becomes shortest edge connecting x to T
+
+// Indexed Priority Queue: Associate an index between 0 and N - 1 with each key in a priority queue
+//	1. Client can insert and delete-the-minimum
+//	2. Client can change the key by specifying the index
+
+// Implementation:
+//	1. Start with same code as MinPQ
+//	2. Maintain parallel arrays keys[], pq[], and qp[] so that:
+//		a. keys[i]: priority of i
+//		b. pq[i]: index of key in heap position i
+//		c. qp[i]: heap position of the key with index i
+//	3. Use swim(qp[k]) implement decreaseKey(k, key)

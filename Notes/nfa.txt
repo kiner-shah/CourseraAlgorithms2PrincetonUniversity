@@ -1,0 +1,95 @@
+// State names: integers from 0 to M (number of symbols in RE)
+// Match transitions: keep regular expression in array re[]
+// From non-meta characters to next character - a transition
+// epsilon transitions: store in a digraph G
+
+// How to efficiently simulate an NFA?
+// Maintain set of all possible states that NFA could be in after reading in the first i characters
+// One step in simulating an NFA:
+//	1. all states reachable after reading i symbols
+//	2. possible transitions on reading (i+1)st symbol c
+//	3. possible null transitions before reading next symbol
+//	4. all states reachable after reading (i+1) symbols
+
+// Digraph reachability: find all vertices reachable from a given source or set of vertices
+// Solution: run DFS from each source without unmarking vertices
+// Performance: runs in time proportional to E + V
+// Determining whether an N-character text is recognized by the NFA corresponding to an M-character pattern takes time proportional to MN in the worst case
+public class NFA {
+	private char[] re;	// match transitions
+	private Digraph G;	// epsilon transition digraph
+	private int M;	// no. of states
+
+	public NFA(String regexp) {
+		M = regexp.length();
+		re = regexp.toCharArray();
+		G = buildEpsilonTransitionDigraph();
+	}
+	public boolean recognizes(String txt) {
+		Bag<Integer> pc = new Bag<Integer>();
+		DirectedDFS dfs = new DirectedDFS(G, 0); // states reachable from start by epsilon transitions
+		for (int v = 0; v < G.V(); v++)
+			if (dfs.marked(v)) pc.add(v);
+
+		for (int i = 0; i < txt.length(); i++) {
+			Bag<Integer> match = new Bag<Integer>(); // states reachable after scanning past txt.charAt(i)
+			for (int v : pc) {
+				if (v == M) continue;
+				if (re[v] == txt.charAt(i) || re[v] == '.')
+					match.add(v + 1);
+			}
+			dfs = new DirectedDFS(G, match);
+			pc = new Bag<Integer>();
+			for (int v = 0; v < G.V(); v++)	// follow epsilon transitions
+				if (dfs.marked(v)) pc.add(v);
+		}
+		for (int v : pc)
+			if (v == M) return true;	// accept if can end in state M
+		return false;
+	}
+	public Digraph buildEpsilonTransitionDigraph() {
+		/* implementation later */
+	}
+}
+
+// Building NFA:
+//	1. Concatenation: add match-transition edge from state corresponding to characters in the alphabet to next state
+//	2. Parentheses: add epsilon transition edge from parentheses to next state
+//	3. Closure: add three epsilon transition edges for each * operator
+//		a. Single character closure: one edge from previous character to *, one edge from * to previous character and one edge from * to next character
+//		b. Closure expression: one edge from left (opening) parentheses to *, one edge from * to left parentheses and one edge from * to next character
+//	4. Or: add two epsilon transition edges for each | operator - one from left parentheses to (or + 1) and one from or to (right parentheses)
+
+// Challenge: remember left parentheses to implement closure and or; remember | to implement or
+
+// Solution: maintain a stack
+//	1. ( symbol: push ( onto stack
+//	2. | symbol: push | onto stack
+//	3. ) symbol: pop corresponding ( and possibly intervening |; add epsilon transition edges for closure/or
+
+// Takes time and space proportional to M
+public Digraph buildEpsilonTransitionDigraph() {
+	Digraph D = new Digraph(M + 1);
+	Stack<Integer> ops = new Stack<Integer>();
+	for (int i = 0; i < M; i++) {
+		int lp = i;
+		if (re[i] == '(' || re[i] == '|') ops.push(i); // left parentheses and |
+		else if (re[i] == ')') {
+			int or = ops.pop();
+			if (re[or] == '|') {	// or
+				lp = ops.pop();
+				G.addEdge(lp, or + 1);
+				G.addEdge(or, i);
+			}
+			else lp = or;
+		}
+		if (i < M - 1 && re[i + 1] == '*') {	// closure (needs 1 character lookahead)
+			G.addEdge(lp, i + 1);
+			G.addEdge(i + 1, lp);
+		}
+		if (re[i] == '(' || re[i] == '*' || re[i] == ')')	// metasymbols
+			G.addEdge(i, i + 1);
+	}
+	return G;
+}
+

@@ -1,0 +1,25 @@
+//	1. Bipartite matching problem:
+// N students apply for N jobs
+// Is there a way to match all students to jobs? So goal is, given a bipartite graph, find a perfect matching, if there exists one
+// Network flow formulation of bipartite matching
+//	a. Create s,t, one vertex for each student and one vertex for each job
+//	b. Add edge from s to each student (capacity 1)
+//	c. Add edge from each job to t (capacity 1)
+//	d. Add edge from student to eacj job offered (infinite capacity)
+// 1-1 correspondence between perfect matchings in bipartite graph and integer-valued maxflows of value N
+// Mincut: consider mincut (A, B)
+// Let S = students on s side of cut
+// Let T = companies on s side of cut (shouldn't this be companies on t side of the cut)
+// Fact: |S| > |T|; students in S can be matched only to companies in T
+// When there is no perfect matching mincut explains why
+
+
+//	2. Baseball elimination
+// Which teams have a chance of finishing the season with the most wins?
+// Observation: answer depends not only on how many games already won and left to play, but on whom they're against
+// Intuition: remaining games flow from s to t
+//	a. Create s,t, one vertex for game between two teams, one vertex for each team
+//	b. Add edge from s to each vertex for game between two teams (capacity = no. of games left between them)
+//	c. Add edge from each vertex for each team to t (capacity = w4 + r4 - wi, i th team can still win this many more games)
+//	d. Add edge from each vertex for game between two teams and each of the two teams  (capacity = infinity)
+// Team 4 not eliminated iff all edges pointing from s are full in maxflow

@@ -1,0 +1,20 @@
+// Mincut problem
+// Input: an edge weighted digraph, source vertex s and target vertex t
+// Cut: An st-cut (cut) is a partition of the vertices into two disjoint sets with s in one set A and t in the other set B
+// Capacity of cut: sum of capacities of edges from A to B
+// Minimum st-cut (mincut) problem: find a cut of minimum capacity
+// Application:
+//	1. (In 1950s) Free "world" goal: cut supplies (if cold war turns into real war)
+//	2. (In 2010s) Government-in-power's goal: cut off communication to set of people
+
+
+// Maxflow problem
+// Same input as mincut problem
+// Flow: An st-flow (flow) is an assignment of values to the edges such that:
+//	1. Capacity constraint: 0 <= edge's flow <= edge's capacity
+//	2. Local equilibrium: inflow = outflow at every vertex (except s and t)
+// Value of a flow: inflow at t
+// Maximum st-flow (maxflow) problem: find a flow of maximum value
+// Applications:
+//	1. (In 1950s) Soviet Union goal: maximize flow of supplies to Eastern Europe
+//	2. (In 2010s) "Free world" goal: maximize flow of information to specified set of people

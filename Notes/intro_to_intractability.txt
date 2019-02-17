@@ -1,0 +1,41 @@
+Questions about computation:
+What is a general purpose computer?
+Are there limits on the power of digital computers?
+Are there limits on the power of machines we can build?
+
+A simple model of computation: DFAs
+Tape:
+- stores input
+- one arbitrarily long strip, divided into cells
+- finite alphabet of symbols
+
+Tape head:
+- points to one cell of tape
+- read a symbol from active cell
+- moves one cell at a time
+
+Is there a more powerful model of computation? Yes.
+
+A universal model of computation: Turing machines
+Tape:
+- stores input, output and intermediate results
+- one arbitrarily long strip, divided into cells
+- finite alphabet of symbols
+
+Tape head:
+- points to one cell of tape
+- reads a symbol from active cell
+- writes a symbol to active cell
+- moves one cell at a time
+
+Is there a more powerful model of computation? No (most important scientific result of 20th century)
+
+Church-Turing thesis (1936): Turing machines can compute any function that can be computed by a physically harnessable process of the natural world.
+
+Remark: "Thesis" and not a mathematical theorem because it's a statement about physical world and not subject to proof (but can be falsified).
+
+Implications:
+- No need to seek more powerful machines or languages
+- Enables rigorous study of computation (in this universe)
+
+A problem is intractable if it can't be solved in polynomial time.

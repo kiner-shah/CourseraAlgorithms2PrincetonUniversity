@@ -1,0 +1,96 @@
+// Abraham Lempel, Jacob Ziv and Terry Welch - LZW compression algorithm
+// Statistical methods
+
+// Static model: same model for all texts
+//	- Fast
+//	- Not optimal, different texts have different statistical properties
+//	- Example: ASCII, Morse code
+
+// Dynamic mode: generate model based on text
+//	- Preliminary pass needed to generate model
+//	- Must transmit the model
+//	- Example: Huffman code
+
+// Adaptive model: progressively learn and update model as you read text
+//	- More accurate modelling produces better compression
+//	- Decoding must start from beginning
+//	- Example: LZW
+
+// LZW compression steps:
+//	1. Create ST associating W-bit codewords with string keys
+//	2. Initialize ST with codewords for single-char keys
+//	3. Find longest string s in ST that is a prefix of unscanned part of input (longest prefix match)
+//	4. Write W-bit codeword associated with s
+//	5. Add s + c to ST, where c is the next char in the input
+
+// How to represent LZE compression code table?
+// A trie to support longest prefix match
+
+public static void compress() {
+	String input = BinaryStdIn.readString();	// read in input as String
+
+	TST<Integer> st = new TST<Integer>();
+	for (int i = 0; i < R; i++)	// codewords for single char, radix R keys
+		st.put("" + (char) i, i);
+	int code = R + 1;
+
+	while (input.length() > 0) {
+		String s = st.longestPrefixOf(input);	// find longest prefix match s
+		BinaryStdOut.write(st.get(s), W);	// write W bit codeword for s
+		int t = s.length();
+		if (t < input.length() && code < L)
+			st.put(input.substring(0, t + 1), code++);	// add new codeword
+		input = input.substring(t);	// scan past s in input
+	}
+	BinaryStdOut.write(R, W);	// write "stop" codeword and close input stream
+	BinaryStdOut.close();
+}
+
+// LZW expansion steps:
+//	1. Create ST associating string values with W-bit keys
+//	2. Initialize ST to contain single-char values
+//	3. Read a W-bit key
+//	4. Find associated string value in ST and write it out
+//	5. Update ST
+
+// How to represent LZW expansion code table?
+// Array of size 2^W
+
+/**
+ * Reads a sequence of bit encoded using LZW compression with
+ * 12-bit codewords from standard input; expands them; and writes
+ * the results to standard output.
+ */
+public static void expand() {
+	String[] st = new String[L]; // L = 4096, no. of codewords = 2^W
+	int i;	// next available codeword value
+
+	// initialize symbol table with all 1-character strings
+	for (i = 0; i < R; i++)
+		st[i] = "" + (char) i;
+	st[i++] = "";	// (unused) lookahead for EOF
+
+	int codeword = BinaryStdIn.readInt(W);
+	if (codeword == R) return;	// expanded message is empty string
+	String val = st[codeword];
+
+	while (true) {
+		BinaryStdOut.write(val);
+		codeword = BinaryStdIn.readInt(W);
+		if (codeword == R) break;
+		if (i == codeword) s - val + val.charAt(0);	// special case hack
+		if (i < L) st[i++] = val + s.charAt(0);
+		val = s;
+	}
+	BinaryStdOut.close();
+}
+
+// How big to make ST?
+//	- How long is message?
+//	- Whole message similar model?, etc.
+
+// What to do when ST fills up?
+//	- Throw away and start over (GIF)
+//	- Throw away when not effective (UNIX compress), etc.
+
+// Why not put longer substrings in ST?
